@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>普通攻击伤害计算器</title>
+
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    
+    <div class="container">
+      <h1 align="center">普通攻击伤害计算器</h1>
+
+      <form>
+        <div class="form-group">
+          <!-- <label for="atk">攻击力</label> -->
+          <input type="email" class="form-control" id="atk" placeholder="面板攻击力">
+        </div>
+
+        <div class="form-group">
+          <label for="ddlActCardType">动作卡</label>
+          <select id="ddlActCardType" name="ddlActCardType">
+            <option value="buster" style="background-color: red">Buster</option>
+            <option value="arts" style="background-color: blue">Arts</option>
+            <option value="quick" style="background-color: green">Quick</option>
+            <option value="ex" style="background-color: gray">EX</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="act_card_index">
+          <!-- 当动作卡为ex时不显示 -->
+          <label for="ddlActCardIndex">动作卡顺序</label>
+          <select id="ddlActCardIndex" name="ddlActCardIndex">
+            <option value="1st">1st</option>
+            <option value="2nd">2nd</option>
+            <option value="3rd">3rd</option>
+          </select>
+        </div>
+
+        <!-- 当动作卡不是1st时，这个选项会显示出来 -->
+        <div class="checkbox" id='first_act_card'>
+          <label>
+            <input type="checkbox" id="firstActCardIsBuster">首卡Buster加成
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="attackClass">攻击方 职阶</label>
+          <select id="attackClass" name="attackClass">
+            <option value="saber">Saber</option>
+            <option value="archer">Archer</option>
+            <option value="lancer">Lancer</option>
+            <option value="rider">Rider</option>
+            <option value="caster">Caster</option>
+            <option value="assassin">Assassin</option>
+            <option value="berserker">Berserker</option>
+            <option value="shielder">Shielder</option>
+            <option value="ruler">Ruler</option>
+            <option value="avenger">Avenger</option>
+            <option value="alter_ego">Alter Ego</option>
+            <option value="beast">Beast</option>
+          </select>
+          <label for="attackCamp"> 阵营</label>
+          <select id="attackCamp" name="attackCamp">
+            <option value="heaven">天</option>
+            <option value="earth">地</option>
+            <option value="human">人</option>
+            <option value="star">星</option>
+            <option value="beast">兽</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="defenceClass">防守方 职阶</label>
+          <select id="defenceClass" name="defenceClass">
+            <option value="saber">Saber</option>
+            <option value="archer">Archer</option>
+            <option value="lancer">Lancer</option>
+            <option value="rider">Rider</option>
+            <option value="caster">Caster</option>
+            <option value="assassin">Assassin</option>
+            <option value="berserker">Berserker</option>
+            <option value="shielder">Shielder</option>
+            <option value="ruler">Ruler</option>
+            <option value="avenger">Avenger</option>
+            <option value="alter_ego">Alter Ego</option>
+            <option value="beast">Beast</option>
+          </select>
+          <label for="defenceCamp"> 阵营</label>
+          <select id="defenceCamp" name="defenceCamp">
+            <option value="heaven">天</option>
+            <option value="earth">地</option>
+            <option value="human">人</option>
+            <option value="star">星</option>
+            <option value="beast">兽</option>
+          </select>
+        </div>
+
+        <!-- 当指令卡为Ex时显示 -->
+        <div class="checkbox" id="same_act_card_when_ex">
+          <label>
+            <input type="checkbox" id="sameActCardWhenEx">同色指令卡连携（Ex加成）
+          </label>
+        </div>
+
+        <!-- 当指令卡为Buster时显示 -->
+        <div class="checkbox" id="buster_chain">
+          <label>
+            <input type="checkbox" id="busterChain">Buster连携
+          </label>
+        </div>
+
+        <button id="btnCalc" class="btn btn-default">计算</button>
+      </form>
+    </div>
+
+
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var valueChangeFallback = function(){
+        var actCardType = $("#ddlActCardType").val();
+        var actCardIndex = $("#ddlActCardIndex").val();
+
+        if (actCardType == 'ex') {
+          $('#act_card_index').hide();
+          $('#same_act_card_when_ex').show();
+          actCardIndex = 'ex';
+        }
+        else {
+          $('#act_card_index').show();
+          $('#same_act_card_when_ex').hide();
+        }
+
+        if (actCardType == 'buster') {
+          $('#buster_chain').show();
+        }
+        else {
+          $('#buster_chain').hide();
+        }
+
+        if (actCardIndex == '1st') {
+          $('#first_act_card').hide();
+        }
+        else {
+          $('#first_act_card').show();
+        }
+      };
+
+      $().ready(function(){
+        console.log("文档加载完成");
+        // $('#first_act_card').hide();
+        // $('#same_act_card_when_ex').hide();
+        valueChangeFallback();
+      });
+
+      $("#ddlActCardType").change(valueChangeFallback);
+      $("#ddlActCardIndex").change(valueChangeFallback);
+    </script>
+  </body>
+</html>
