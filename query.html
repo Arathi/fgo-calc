@@ -1,0 +1,14 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.js"></script>
+        <script src="https://cdn.staticfile.org/taffydb/2.7.3/taffy-min.js"></script>
+        <script src="servants.js"></script>
+        <script type="text/javascript">
+            var servantDao = TAFFY(servants);
+            alert(servantDao().order("id").first().name_cn);
+        </script>
+    </body>
+</html>

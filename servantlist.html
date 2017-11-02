@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>灵基一览</title>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css"/>
+</head>
+<body>
+
+<div ng-app="ngApp" ng-controller="servantListCtrl">
+<table id="servantList">
+  <tr>
+    <th>ID</th>
+    <th>名称</th>
+    <th>职阶</th>
+    <th>阵营</th>
+    <th>基础HP</th>
+    <th>基础ATK</th>
+  </tr>
+  <tr ng-repeat="servant in servants">
+    <td>{{ servant.id }}</td>
+    <td>{{ servant.name_cn }}</td>
+    <td>{{ servant.class }}</td>
+    <td>{{ servant.camp }}</td>
+    <td>{{ servant.hp }}</td>
+    <td>{{ servant.atk }}</td>
+  </tr>
+</table>
+</div>
+
+<script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/angular.js/1.6.3/angular.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script>
+var app = angular.module('ngApp', []);
+
+app.controller('servantListCtrl', function($scope, $http) {
+  $http.get("servants.json").then(function (result) {
+    $scope.servants = result.data;
+  });
+});
+
+$(document).ready(function(){
+    $('#servantList').DataTable();
+});
+</script>

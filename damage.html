@@ -24,7 +24,7 @@
       <form>
         <div class="form-group">
           <!-- <label for="atk">攻击力</label> -->
-          <input type="email" class="form-control" id="atk" placeholder="面板攻击力">
+          <input type="text" class="form-control" id="atk" placeholder="面板攻击力">
         </div>
 
         <div class="form-group">
@@ -120,7 +120,7 @@
           </label>
         </div>
 
-        <button id="btnCalc" class="btn btn-default">计算</button>
+        <button type="button" id="btnCalc" class="btn btn-default">计算</button>
       </form>
     </div>
 
@@ -157,6 +157,112 @@
         }
       };
 
+      var getCorrectionByClass = function(servantClass) {
+        var rate = 1.0;
+        if (servantClass == 'saber') {
+          rate = 1.0;
+        }
+        if (servantClass == 'archer') {
+          rate = 0.95;
+        }
+        if (servantClass == 'lancer') {
+          rate = 1.05;
+        }
+        if (servantClass == 'rider') {
+          rate = 1.0;
+        }
+        if (servantClass == 'caster') {
+          rate = 0.9;
+        }
+        if (servantClass == 'assassin') {
+          rate = 0.9;
+        }
+        if (servantClass == 'berserker') {
+          rate = 1.1;
+        }
+        if (servantClass == 'shielder') {
+          rate = 1.0;
+        }
+        if (servantClass == 'ruler') {
+          rate = 1.1;
+        }
+        if (servantClass == 'avenger') {
+          rate = 1.1;
+        }
+        if (servantClass == 'alter_ego') {
+          rate = 1.0;
+        }
+        if (servantClass == 'beast') {
+          rate = 1.0;
+        }
+        return rate;
+      };
+
+      var getAntagonismByClasses = function(atkClass, defClass) {
+        // TODO 目前是只有1.0
+        return 1.0;
+      };
+
+      var getAntagonismByCamps = function(atkCamp, defCamp) {
+        // TODO 目前是只有1.0
+        return 1.0;
+      }
+
+      // actBuff 各种红拐绿拐蓝拐，Buster/Arts/Quick性能加成
+      calcDamage = function(atk, actCardType, actCardIndex, actBuff, 
+            firstActCardIsBuster, atkClass, atkCamp, defClass, defCamp, random, 
+            atkBuff, defBuff, spAtkBuff, spDefBuff, critFlag, critBuff,
+            damageBuff, damageDerateBuff, isChain) {
+        var ATK_CORRECTION_CONSTANT = 0.23;
+
+        var actCardDamageRate = 1; 
+        if (actCardType == 'buster') actCardDamageRate = 1.5;
+        if (actCardType == 'quick') actCardDamageRate = 0.8;
+
+        var actCardOrderAddition = 1;
+        if (actCardIndex == '2nd') actCardOrderAddition = 1.2;
+        if (actCardIndex == '3rd') actCardOrderAddition = 1.4;
+
+        var firstActCardAddition = 1.0;
+        if (actCardIndex == '1st' && actCardType == 'buster') {
+          firstActCardAddition = 1.5;
+        }
+        else if (actCardIndex != '1st' && firstActCardIsBuster) {
+          firstActCardAddition = 1.5;
+        }
+
+        var classCorrection = getCorrectionByClass(atkClass);
+        var classAntagonism = getAntagonismByClasses(atkClass, defClass);
+        var campAntagonism = getAntagonismByCamps(atkCamp, defCamp);
+
+        var critRate = 1;
+        if (critFlag) critRate = 2.0;
+
+        var exBouns = 1;
+        if (actCardType == 'ex') {
+          if (isChain) {
+            exBouns = 3.5;
+          }
+          else {
+            exBouns = 2.0;
+          }
+        }
+
+        var busterChainAddition = 0;
+        if (actCardType == 'buster' && isChain) {
+          busterChainAddition = 0.2;
+        }
+
+        var damage = atk * ATK_CORRECTION_CONSTANT * (actCardDamageRate * 
+          actCardOrderAddition * (1+actBuff) * firstActCardAddition) * 
+          classCorrection * classAntagonism * campAntagonism * random * 
+          (1+atkBuff-defBuff) * (1+spAtkBuff-spDefBuff+critBuff) * critRate *
+          exBouns + (damageBuff - damageDerateBuff) + 
+          atk * busterChainAddition;
+
+        return damage;
+      };
+
       $().ready(function(){
         console.log("文档加载完成");
         // $('#first_act_card').hide();
@@ -166,6 +272,43 @@
 
       $("#ddlActCardType").change(valueChangeFallback);
       $("#ddlActCardIndex").change(valueChangeFallback);
+
+      $("#btnCalc").click(function(){
+        console.log("开始计算");
+
+        var atk = $("#atk").val();
+
+        var actCardType = $("#ddlActCardType").val();
+        var actCardIndex = $("#ddlActCardIndex").val();
+
+        var randomMin = 0.9;
+        var randomMax = 1.1;
+
+        var atkClass = $("#attackClass").val();
+        var defClass = $("#defenceClass").val();
+        var atkCamp = $("#attackCamp").val();
+        var defCamp = $("#defenceCamp").val();
+
+        var actBuff = 0;
+        var atkBuff = 0;
+        var defBuff = 0;
+        var spAtkBuff = 0;
+        var spDefBuff = 0;
+        var critFlag = false;
+        var critBuff = 0;
+        var damageBuff = 0;
+        var damageDerateBuff = 0;
+
+        var isChain = false;
+        // 
+
+        var damageMin = calcDamage(atk, actCardType, actCardIndex, actBuff, 
+          false, atkClass, atkCamp, defClass, defCamp, randomMin, 
+          atkBuff, defBuff, spAtkBuff, spDefBuff, critFlag, critBuff, 
+          damageBuff, damageDerateBuff, isChain);
+        
+        console.log("最低伤害：" + damageMin);
+      });
     </script>
   </body>
 </html>
